@@ -21,7 +21,7 @@
             </div>
             <h2 id="mensajeExito" style="display:none">Datos guardados</h2>
             <div data-role="content" data-enhance="false">
-             <form action="#" method="post" class="ui-body ui-body-a ui-corner-all" id="formulario">
+             <form action="#" method="post" id="formulario">
 				<fieldset>
 					
 				
@@ -47,6 +47,11 @@
         <script type="text/javascript" src="phonegap.js"></script>
         <script type="text/javascript" >
 		var db;
+		
+		jQuery.fn.reset = function () {
+		  $(this).each (function() { this.reset(); });
+		}
+		
 		$(document).bind("mobileinit", function(){
 		  $.mobile.ignoreContentEnabled = true;
 		});
@@ -75,6 +80,7 @@
 		function txListo() {
 			console.log("Save success");
 			$("#mensajeExito").fadeIn(300).delay(1200).fadeOut(500);
+			$("#formulario").reset();
 		}
 		
 		function guardarDatos(tx) {
