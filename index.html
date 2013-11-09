@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.css" />
+        <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
+        
+        <title>Consumo reponsable</title>
+    </head>
+    <body>
+        <div id="reposHome" data-role="page">
+            <div data-role="header" data-position="fixed">
+                <h1>Consumo responsable</h1>
+                <a href="listado.html" class="ui-btn-right" data-icon="arrow-r">Datos Almacenados</a>
+            </div>
+            <div data-role="content">
+             <form action="#" method="post" class="ui-body ui-body-a ui-corner-all" id="formulario">
+				<fieldset>
+					
+				
+              <div data-role="fieldcontain" class="ui-hide-label">
+                <label for="username">DNI:</label>
+                <input type="text" name="dni" id="dni" value="" placeholder="DNI"/>
+              </div>
+              <div data-role="fieldcontain" class="ui-hide-label">
+                <label for="username">Nombre:</label>
+                <input type="text" name="nombre" id="nombre" value="" placeholder="Nombre"/>
+              </div>
+              <div data-role="fieldcontain" class="ui-hide-label">
+                <label for="username">Apellido:</label>
+                <input type="text" name="apellido" id="apellido" value="" placeholder="Apellido"/>
+              </div>
+              <div data-role="fieldcontain" class="ui-hide-label">
+              	<button type="submit" data-theme="a" class="ui-btn-hidden" aria-disabled="false">Guardar</button>
+              </div>
+              </fieldset>
+			</form>
+        </div>
+        
+        <script type="text/javascript" src="phonegap.js"></script>
+        <script type="text/javascript" >
+		var db;
+
+		$('#reposHome').bind('pageinit', function(event) {
+			
+			db = window.openDatabase("repodb","0.1","GitHub Repo Db", 120000);
+			db.transaction(createDb, txError, txSuccess);
+		});
+		
+		function createDb(tx) {
+			tx.executeSql("DROP TABLE IF EXISTS repos");
+			tx.executeSql("CREATE TABLE repos(dni,nombre,apellido)");
+		}
+		
+		function txError(error) {
+			console.log(error);
+			console.log("Database error: " + error);
+		}
+		
+		function txSuccess() {
+			console.log("Success");
+		}
+
+		function txListo() {
+			console.log("Save success");
+			
+		}
+		
+		function guardarDatos(tx) {
+			var dni = $("#dni").val();
+			var nombre = $("#nombre").val();
+			var apellido =  $("#apellido").val();
+			tx.executeSql("INSERT INTO repos(dni,nombre,apellido) VALUES (?,?,?)",[dni,nombre,apellido]);
+		}
+		
+		
+		function txSuccessLoadFaves(tx,results) {
+			console.log("Read success");
+			
+			if (results.rows.length) {
+				var len = results.rows.length;
+				var repo;
+				for (var i=0; i < len; i = i + 1) {
+					repo = results.rows.item(i);
+					console.log(repo);
+					$("#listadoList").append("<li>" + repo.apellido+","+repo.nombre +" - " +repo.dni + "</li>");
+				};
+				$('#listadoList').listview('refresh');
+			}
+			else {
+				if (navigator.notification)
+					navigator.notification.alert("You haven't saved any favorites yet.", alertDismissed);
+				else
+					alert("You haven't saved any favorites yet.");
+			}
+		}
+		
+		$('#formulario').submit(function() {
+			db = window.openDatabase("repodb","0.1","GitHub Repo Db", 1000);
+			db.transaction(guardarDatos, txError, txListo);	
+		  	return false;
+		});
+		
+		$('#listado').live('pageshow', function(event) {
+			db.transaction(loadFavesDb, txError, txSuccess);
+		});
+		
+		function loadFavesDb(tx) {
+			tx.executeSql("SELECT * FROM repos",[],txSuccessLoadFaves);
+		}
+		
+        </script>
+    </body>
+</html>
