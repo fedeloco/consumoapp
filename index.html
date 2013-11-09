@@ -53,8 +53,8 @@
 		});
 		
 		function createDb(tx) {
-			tx.executeSql("DROP TABLE IF EXISTS repos");
-			tx.executeSql("CREATE TABLE repos(dni,nombre,apellido)");
+//			tx.executeSql("DROP TABLE IF EXISTS repos");
+			tx.executeSql("CREATE TABLE IF NOT EXISTS repos(dni,nombre,apellido)");
 		}
 		
 		function txError(error) {
