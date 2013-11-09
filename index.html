@@ -13,30 +13,32 @@
         <title>Consumo reponsable</title>
     </head>
     <body>
-        <div id="reposHome" data-role="page">
+        <div id="reposHome" data-role="page" >
+        	
             <div data-role="header" data-position="fixed">
                 <h1>Consumo responsable</h1>
                 <a href="listado.html" class="ui-btn-right" data-icon="arrow-r">Datos Almacenados</a>
             </div>
-            <div data-role="content">
+            <h2 id="mensajeExito" style="display:none">Datos guardados</h2>
+            <div data-role="content" data-enhance="false">
              <form action="#" method="post" class="ui-body ui-body-a ui-corner-all" id="formulario">
 				<fieldset>
 					
 				
               <div data-role="fieldcontain" >
                 <label for="dni">DNI:</label>
-                <input type="text" name="dni" id="dni" value=""  tabindex="1"/>
+                <input type="text" name="dni" id="dni" value=""  tabindex="1" data-role="none"/>
               </div>
               <div data-role="fieldcontain">
                 <label for="nombre">Nombre:</label>
-                <input type="text" name="nombre" id="nombre" value=""  tabindex="2"/>
+                <input type="text" name="nombre" id="nombre" value=""  tabindex="2" data-role="none"/>
               </div>
               <div data-role="fieldcontain">
                 <label for="apellido">Apellido:</label>
-                <input type="text" name="apellido" id="apellido" value=""  tabindex="3"/>
+                <input type="text" name="apellido" id="apellido" value=""  tabindex="3" data-role="none"/>
               </div>
               <div data-role="fieldcontain">
-              	<button type="submit" data-theme="a" class="ui-btn-hidden" aria-disabled="false" tabindex="4">Guardar</button>
+              	<button type="submit"  aria-disabled="false" tabindex="4" data-role="none">Guardar</button>
               </div>
               </fieldset>
 			</form>
@@ -45,6 +47,9 @@
         <script type="text/javascript" src="phonegap.js"></script>
         <script type="text/javascript" >
 		var db;
+		$(document).bind("mobileinit", function(){
+		  $.mobile.ignoreContentEnabled = true;
+		});
 
 		$('#reposHome').bind('pageinit', function(event) {
 			
@@ -64,11 +69,12 @@
 		
 		function txSuccess() {
 			console.log("Success");
+			
 		}
 
 		function txListo() {
 			console.log("Save success");
-			
+			$("#mensajeExito").fadeIn(300).delay(1200).fadeOut(500);
 		}
 		
 		function guardarDatos(tx) {
