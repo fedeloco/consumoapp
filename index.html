@@ -53,7 +53,7 @@
 		}
 		
 		$(document).bind("mobileinit", function(){
-		  $.mobile.ignoreContentEnabled = true;
+		  //$.mobile.ignoreContentEnabled = true;
 		});
 
 		$('#reposHome').bind('pageinit', function(event) {
@@ -90,6 +90,7 @@
 			tx.executeSql("INSERT INTO repos(dni,nombre,apellido) VALUES (?,?,?)",[dni,nombre,apellido]);
 		}
 		
+		var resultados
 		
 		function txSuccessLoadFaves(tx,results) {
 			console.log("Read success");
@@ -97,10 +98,13 @@
 			if (results.rows.length) {
 				var len = results.rows.length;
 				var repo;
+				resultados = new Array();
 				for (var i=0; i < len; i = i + 1) {
 					repo = results.rows.item(i);
 					console.log(repo);
 					$("#listadoList").append("<li>" + repo.apellido+","+repo.nombre +" - " +repo.dni + "</li>");
+					resultados.push(new Array(repo.apellido,repo.nombre,repo.dni));
+					
 				};
 				$('#listadoList').listview('refresh');
 			}
@@ -124,6 +128,35 @@
 		
 		function loadFavesDb(tx) {
 			tx.executeSql("SELECT * FROM repos",[],txSuccessLoadFaves);
+		}
+		
+		function txSuccessSincro(){
+			
+			$.ajax({
+			    type: 'POST',
+				url: "http://santafedisfrutaconresponsabilidad.com",
+				async: false,
+				jsonpCallback: 'jsonCallback',
+				contentType: "application/json",
+				dataType: 'jsonp',
+				data : {"act":"doGuardarDatosSincro","datos":resultados},
+				success: function(json) {
+				   $("#mensajeDialog").html("Los datos fueron almacenados correctamente");
+				},
+				error: function(e) {
+					$("#mensajeDialog").html("Los datos fueron almacenados correctamente");
+				}
+			});
+			
+			
+			$("#mensajeExito2").fadeIn(400).delay(300).fadeOut(400);
+		}
+		function txSincroDatos(tx){
+				$.mobile.changePage( "mensaje.html", { role: "dialog" } );
+		}
+		
+		function sincroDatos(){
+			db.transaction(txSincroDatos, txError, txSuccessSincro);
 		}
 		
         </script>
